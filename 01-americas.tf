@@ -26,17 +26,19 @@ resource "google_compute_subnetwork" "americas-subnet-b" {
   private_ip_google_access = true
 }
 
-//=========================================================================
+//====================================================================
 
 //Americas VM A
 resource "google_compute_instance" "americas-vm-a" {
+    name = "americas-vm-a"
+    zone = "us-east1-b"
   boot_disk {
     auto_delete = true
     device_name = "americas-vm-a"
 
     initialize_params {
-      image = "projects/windows-cloud/global/images/windows-server-2022-dc-v20240415"
-      size  = 100
+      image = "projects/debian-cloud/global/images/debian-12-bookworm-v20240415"
+      size  = 10
       type  = "pd-balanced"
     }
 
@@ -53,8 +55,6 @@ resource "google_compute_instance" "americas-vm-a" {
 
   machine_type = "e2-medium"
 
-  name = "americas-vm-a"
-
   network_interface {
     access_config {
       network_tier = "PREMIUM"
@@ -62,7 +62,7 @@ resource "google_compute_instance" "americas-vm-a" {
 
     queue_count = 0
     stack_type  = "IPV4_ONLY"
-    subnetwork  = "projects/bionic-flux-414109/regions/us-east1/subnetworks/americas-subnet-a"
+    subnetwork  = google_compute_subnetwork.americas-subnet-a.id
   }
 
   scheduling {
@@ -71,31 +71,19 @@ resource "google_compute_instance" "americas-vm-a" {
     preemptible         = false
     provisioning_model  = "STANDARD"
   }
-
-  service_account {
-    email  = "380985038603-compute@developer.gserviceaccount.com"
-    scopes = ["https://www.googleapis.com/auth/devstorage.read_only", "https://www.googleapis.com/auth/logging.write", "https://www.googleapis.com/auth/monitoring.write", "https://www.googleapis.com/auth/service.management.readonly", "https://www.googleapis.com/auth/servicecontrol", "https://www.googleapis.com/auth/trace.append"]
-  }
-
-  shielded_instance_config {
-    enable_integrity_monitoring = true
-    enable_secure_boot          = false
-    enable_vtpm                 = true
-  }
-
-  tags = ["http-server"]
-  zone = "us-east1-d"
 }
 
-//Americas VM B
+// Americas VM B
 resource "google_compute_instance" "americas-vm-b" {
+    name = "americas-vm-b"
+    zone = "us-west1-a"
   boot_disk {
     auto_delete = true
     device_name = "americas-vm-b"
 
     initialize_params {
-      image = "projects/windows-cloud/global/images/windows-server-2022-dc-v20240415"
-      size  = 100
+      image = "projects/debian-cloud/global/images/debian-12-bookworm-v20240415"
+      size  = 10
       type  = "pd-balanced"
     }
 
@@ -111,7 +99,6 @@ resource "google_compute_instance" "americas-vm-b" {
   }
 
   machine_type = "e2-medium"
-  name         = "americas-vm-b"
 
   network_interface {
     access_config {
@@ -120,7 +107,7 @@ resource "google_compute_instance" "americas-vm-b" {
 
     queue_count = 0
     stack_type  = "IPV4_ONLY"
-    subnetwork  = "projects/bionic-flux-414109/regions/us-west1/subnetworks/americas-subnet-b"
+    subnetwork  = google_compute_subnetwork.americas-subnet-b.id
   }
 
   scheduling {
@@ -129,19 +116,7 @@ resource "google_compute_instance" "americas-vm-b" {
     preemptible         = false
     provisioning_model  = "STANDARD"
   }
-
-  service_account {
-    email  = "380985038603-compute@developer.gserviceaccount.com"
-    scopes = ["https://www.googleapis.com/auth/devstorage.read_only", "https://www.googleapis.com/auth/logging.write", "https://www.googleapis.com/auth/monitoring.write", "https://www.googleapis.com/auth/service.management.readonly", "https://www.googleapis.com/auth/servicecontrol", "https://www.googleapis.com/auth/trace.append"]
-  }
-
-  shielded_instance_config {
-    enable_integrity_monitoring = true
-    enable_secure_boot          = false
-    enable_vtpm                 = true
-  }
-
-  tags = ["http-server"]
+}
   zone = "us-west1-c"
 }
 
